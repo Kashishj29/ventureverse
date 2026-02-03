@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | VentureVerse</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="/" class="brand">
+        <div class="logo">V</div>
+        <div class="brand-name">VentureVerse</div>
+      </a>
+      <nav style="display: flex; align-items: center;">
+        <a href="/" class="nav-link">Home</a>
+        <a href="{{ url_for('about') }}" class="nav-link" style="color: var(--primary);">About</a>
+        {% if user_name %}
+          <span class="nav-link" style="color: var(--text-sub);">Hi, {{ user_name }}</span>
+          <a href="{{ url_for('logout') }}" class="nav-btn-signin">Logout</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="padding-top: 40px; padding-bottom: 60px;">
+    
+    <div class="card" style="max-width: 800px; margin: 0 auto;">
+      <h1 style="font-size: 2rem; margin-bottom: 8px;">About VentureVerse</h1>
+      <p style="color: var(--text-sub); margin-bottom: 30px;">
+        AI-powered startup success prediction using machine learning
+      </p>
+      
+      <div style="margin-bottom: 30px;">
+        <h2 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 12px;">🎯 Project Overview</h2>
+        <p style="color: var(--text-sub); line-height: 1.7;">
+          VentureVerse is a machine learning-based web application that predicts the success potential 
+          of startup ideas using pre-launch indicators derived from publicly available data. The system 
+          analyses factors such as funding stage, team composition, industry type, and technology stack 
+          to generate a success probability score.
+        </p>
+      </div>
+      
+      <div style="margin-bottom: 30px;">
+        <h2 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 12px;">🔬 Technology Stack</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+          <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="font-weight: 700; margin-bottom: 6px;">Backend</div>
+            <div style="color: var(--text-sub); font-size: 0.9rem;">Python, Flask, SQLite</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="font-weight: 700; margin-bottom: 6px;">Machine Learning</div>
+            <div style="color: var(--text-sub); font-size: 0.9rem;">Scikit-learn, XGBoost, Pandas</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="font-weight: 700; margin-bottom: 6px;">Frontend</div>
+            <div style="color: var(--text-sub); font-size: 0.9rem;">HTML5, CSS3, JavaScript</div>
+          </div>
+          <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 8px; border: 1px solid var(--border);">
+            <div style="font-weight: 700; margin-bottom: 6px;">Visualisation</div>
+            <div style="color: var(--text-sub); font-size: 0.9rem;">Chart.js</div>
+          </div>
+        </div>
+      </div>
+      
+      <div style="margin-bottom: 30px;">
+        <h2 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 12px;">📊 ML Models Evaluated</h2>
+        <p style="color: var(--text-sub); line-height: 1.7; margin-bottom: 12px;">
+          Three machine learning algorithms were trained and compared:
+        </p>
+        <ul style="color: var(--text-sub); line-height: 1.8; padding-left: 20px;">
+          <li><strong>Logistic Regression</strong> - Baseline interpretable model</li>
+          <li><strong>Random Forest</strong> - Ensemble method with feature importance</li>
+          <li><strong>Gradient Boosting (XGBoost)</strong> - Advanced ensemble for best accuracy</li>
+        </ul>
+        <p style="color: var(--text-sub); line-height: 1.7; margin-top: 12px;">
+          The best performing model is automatically selected based on F1 score evaluation.
+        </p>
+      </div>
+      
+      <div style="margin-bottom: 30px;">
+        <h2 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 12px;">📈 Dataset</h2>
+        <p style="color: var(--text-sub); line-height: 1.7;">
+          The model is trained on a dataset of 5,000+ global startups with features including:
+          funding amounts, employee counts, valuations, industry sectors, geographic regions,
+          funding stages, and outcomes (IPO/Acquired status).
+        </p>
+      </div>
+      
+      <div style="background: rgba(96, 165, 250, 0.1); padding: 24px; border-radius: 12px; border: 1px solid rgba(96, 165, 250, 0.3);">
+        <h2 style="font-size: 1.1rem; color: var(--primary); margin-bottom: 12px;">🎓 Academic Project</h2>
+        <p style="color: var(--text-sub); line-height: 1.7; margin-bottom: 8px;">
+          <strong>Course:</strong> 6COSC023W - Computer Science Final Year Project
+        </p>
+        <p style="color: var(--text-sub); line-height: 1.7; margin-bottom: 8px;">
+          <strong>Student:</strong> Kashish Jadhav (w2035589)
+        </p>
+        <p style="color: var(--text-sub); line-height: 1.7; margin-bottom: 8px;">
+          <strong>Supervisor:</strong> Ebad Majeed
+        </p>
+        <p style="color: var(--text-sub); line-height: 1.7;">
+          <strong>Institution:</strong> University of Westminster, School of Computer Science & Engineering
+        </p>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <a href="/" class="btn" style="display: inline-block; width: auto; padding: 12px 40px;">
+        ← Back to Predictor
+      </a>
+    </div>
+    
+  </main>
+
+  <footer style="text-align: center; padding: 30px 0; color: var(--text-sub); font-size: 0.8rem;">
+    <div class="container">
+      VentureVerse © 2026 | BSc Computer Science Final Year Project
+    </div>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sign Up | VentureVerse</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <style>
+    .auth-body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    .auth-card {
+      width: min(420px, 100%);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    }
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .auth-logo .logo {
+      width: 48px;
+      height: 48px;
+      font-size: 1.5rem;
+    }
+    .auth-logo .brand-name {
+      font-size: 1.5rem;
+    }
+    .auth-title {
+      margin: 0 0 8px 0;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-main);
+      text-align: center;
+    }
+    .auth-sub {
+      margin: 0 0 24px 0;
+      color: var(--text-sub);
+      text-align: center;
+      font-size: 0.95rem;
+    }
+    .auth-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .auth-form label {
+      margin-bottom: 4px;
+    }
+    .auth-form input {
+      padding: 12px 14px;
+    }
+    .auth-footer {
+      margin-top: 20px;
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.9rem;
+    }
+    .auth-footer a {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .auth-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="auth-body">
+
+  <div class="auth-card">
+    <div class="auth-logo">
+      <div class="logo">V</div>
+      <div class="brand-name">VentureVerse</div>
+    </div>
+    
+    <h1 class="auth-title">Create Account</h1>
+    <p class="auth-sub">Join VentureVerse to predict startup success</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="flash-wrap" style="margin-bottom: 16px;">
+          {% for category, msg in messages %}
+            <div class="flash {{ category }}">{{ msg }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="auth-form">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" name="full_name" placeholder="e.g. Kashish Jadhav" required autofocus>
+      </div>
+
+      <div class="field">
+        <label>Email Address</label>
+        <input type="email" name="email" placeholder="name@example.com" required>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Create a strong password" required minlength="6">
+        <div class="hint">Minimum 6 characters</div>
+      </div>
+
+      <div class="field">
+        <label>Confirm Password</label>
+        <input type="password" name="confirm_password" placeholder="Repeat your password" required>
+      </div>
+
+      <button class="btn" type="submit">Create Account</button>
+    </form>
+
+    <p class="auth-footer">
+      Already have an account? 
+      <a href="{{ url_for('login') }}">Sign in</a>
+    </p>
+  </div>
+
+</body>
+</html>

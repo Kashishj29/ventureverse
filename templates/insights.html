@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Analytics Dashboard | VentureVerse</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a href="/" class="brand">
+        <div class="logo">V</div>
+        <div class="brand-name">VentureVerse Analytics</div>
+      </a>
+      <nav style="display: flex; align-items: center;">
+        <a href="/" class="nav-link">← Back to Predictor</a>
+        <span class="nav-link" style="color: var(--text-sub);">Hi, {{ user_name }}</span>
+        <a href="{{ url_for('logout') }}" class="nav-btn-signin">Logout</a>
+      </nav>
+    </div>
+  </header>
+  
+  <main class="container">
+    <!-- MAIN SCORE BANNER -->
+    <section class="hero" style="margin: 30px 0;">
+      <div class="card" style="border-left: 6px solid {{ data.color }}; display: flex; justify-content: space-between; align-items: center; padding: 30px 40px; flex-wrap: wrap; gap: 20px;">
+        <div>
+          <h2 style="color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">Assessment Classification</h2>
+          <div style="font-size: 2.25rem; font-weight: 800; color: #f8fafc;">{{ data.classification }}</div>
+        </div>
+        <div style="text-align: right;">
+          <div style="font-size: 3.5rem; font-weight: 800; color: {{ data.color }};">{{ data.score }}%</div>
+          <div style="color: #64748b; font-size: 0.9rem;">Success Probability Score</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CHARTS GRID -->
+    <div class="grid" style="margin-bottom: 40px;">
+      
+      <!-- Financial Scale Chart -->
+      <div class="card" style="grid-column: span 6;">
+        <div class="card-title">💰 Financial Scale ($ Millions)</div>
+        <div class="chart-container">
+          <canvas id="financialChart"></canvas>
+        </div>
+        <div class="hint" style="text-align: center; margin-top: 12px;">
+          Your funding vs. successful startup benchmarks
+        </div>
+      </div>
+      
+      <!-- Strategic Ratios Chart -->
+      <div class="card" style="grid-column: span 6;">
+        <div class="card-title">📈 Strategic Ratios</div>
+        <div class="chart-container">
+          <canvas id="ratioChart"></canvas>
+        </div>
+        <div class="hint" style="text-align: center; margin-top: 12px;">
+          Capital efficiency and valuation metrics
+        </div>
+      </div>
+
+      <!-- Funding Velocity Chart -->
+      <div class="card" style="grid-column: span 6;">
+        <div class="card-title">⚡ Funding Velocity ($M / Year)</div>
+        <div class="chart-container">
+          <canvas id="velocityChart"></canvas>
+        </div>
+        <div class="hint" style="text-align: center; margin-top: 12px;">
+          Speed of capital acquisition over company lifetime
+        </div>
+      </div>
+
+      <!-- Key Drivers / Insights -->
+      <div class="card" style="grid-column: span 6;">
+        <div class="card-title">🔍 Key Drivers Analysis</div>
+        <div style="background: rgba(255,255,255,0.03); padding: 20px; border-radius: 8px;">
+          {% if data.insights %}
+            {% for insight in data.insights %}
+              <div class="insight-item">
+                <div class="insight-icon {{ insight.type }}">
+                  {{ '▲' if insight.type == 'pos' else '▼' }}
+                </div>
+                <div style="color: #e2e8f0; font-size: 0.9rem;">{{ insight.text }}</div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div style="color: var(--text-sub); text-align: center; padding: 20px;">
+              No insights available. Make a prediction first.
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- RECOMMENDATION SECTION -->
+    <div class="card" style="margin-bottom: 40px;">
+      <div class="card-title">📋 Recommendations Summary</div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+        
+        {% if data.score >= 75 %}
+        <div style="background: rgba(52, 211, 153, 0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(52, 211, 153, 0.3);">
+          <div style="font-weight: 700; color: #34d399; margin-bottom: 8px;">✅ Strong Position</div>
+          <div style="color: var(--text-sub); font-size: 0.9rem;">Your startup shows indicators aligned with successful ventures. Focus on execution and scaling.</div>
+        </div>
+        {% elif data.score >= 50 %}
+        <div style="background: rgba(251, 191, 36, 0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(251, 191, 36, 0.3);">
+          <div style="font-weight: 700; color: #fbbf24; margin-bottom: 8px;">⚠️ Moderate Potential</div>
+          <div style="color: var(--text-sub); font-size: 0.9rem;">Good foundation with room for improvement. Address the negative factors in the analysis above.</div>
+        </div>
+        {% else %}
+        <div style="background: rgba(248, 113, 113, 0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(248, 113, 113, 0.3);">
+          <div style="font-weight: 700; color: #f87171; margin-bottom: 8px;">⚡ Action Required</div>
+          <div style="color: var(--text-sub); font-size: 0.9rem;">Consider pivoting strategy or securing additional resources before scaling.</div>
+        </div>
+        {% endif %}
+        
+        <div style="background: rgba(96, 165, 250, 0.1); padding: 20px; border-radius: 12px; border: 1px solid rgba(96, 165, 250, 0.3);">
+          <div style="font-weight: 700; color: #60a5fa; margin-bottom: 8px;">📊 Data-Driven</div>
+          <div style="color: var(--text-sub); font-size: 0.9rem;">This analysis is based on patterns from 5,000+ startup outcomes. Use as one input in your decision-making.</div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- BACK BUTTON -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <a href="/" class="btn" style="display: inline-block; width: auto; padding: 12px 40px;">
+        ← Make Another Prediction
+      </a>
+    </div>
+
+  </main>
+
+  <footer style="text-align: center; padding: 30px 0; color: var(--text-sub); font-size: 0.8rem;">
+    <div class="container">
+      VentureVerse Analytics © 2026 | University of Westminster Final Year Project
+    </div>
+  </footer>
+
+  <script>
+    // Chart.js configuration
+    const chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: { color: '#94a3b8', font: { size: 11 } }
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          grid: { color: '#334155' },
+          ticks: { color: '#94a3b8' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { color: '#cbd5e1' }
+        }
+      }
+    };
+
+    // Financial Chart
+    const financialData = {{ data.financial_json | safe }};
+    new Chart(document.getElementById('financialChart'), {
+      type: 'bar',
+      data: {
+        labels: financialData.labels,
+        datasets: [
+          { label: 'Your Venture', data: financialData.user, backgroundColor: '#3b82f6' },
+          { label: 'Benchmark', data: financialData.benchmark, backgroundColor: '#475569' }
+        ]
+      },
+      options: chartOptions
+    });
+
+    // Ratio Chart
+    const ratioData = {{ data.ratio_json | safe }};
+    new Chart(document.getElementById('ratioChart'), {
+      type: 'bar',
+      data: {
+        labels: ratioData.labels,
+        datasets: [
+          { label: 'Your Venture', data: ratioData.user, backgroundColor: '#34d399' },
+          { label: 'Benchmark', data: ratioData.benchmark, backgroundColor: '#475569' }
+        ]
+      },
+      options: chartOptions
+    });
+    
+    // Velocity Chart
+    const velocityData = {{ data.velocity_json | safe }};
+    new Chart(document.getElementById('velocityChart'), {
+      type: 'bar',
+      data: {
+        labels: velocityData.labels,
+        datasets: [
+          { label: 'Your Velocity', data: velocityData.user, backgroundColor: '#f59e0b' },
+          { label: 'Benchmark', data: velocityData.benchmark, backgroundColor: '#475569' }
+        ]
+      },
+      options: chartOptions
+    });
+  </script>
+</body>
+</html>
