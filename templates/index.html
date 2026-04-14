@@ -1,183 +1,176 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VentureVerse | AI Startup Success Predictor</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>VentureVerse | Predict</title>
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}?v=2">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}?v=2">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <a href="/" class="brand">
-        <div class="logo">V</div>
-        <div class="brand-name">VentureVerse</div>
-      </a>
-      <nav style="display: flex; align-items: center;">
-        <a href="/" class="nav-link">Home</a>
-        <a href="{{ url_for('about') }}" class="nav-link">About</a>
-        {% if user_name %}
-          <span class="nav-link" style="color: var(--text-sub);">Hi, {{ user_name }}</span>
-          <a href="{{ url_for('logout') }}" class="nav-btn-signin">Logout</a>
-        {% else %}
-          <a href="{{ url_for('login') }}" class="nav-btn-signin">Sign In</a>
-        {% endif %}
-      </nav>
-    </div>
-  </header>
+  {% include 'nav.html' %}
 
   <main class="container">
-    <!-- Flash Messages -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="flash-wrap" style="margin-top: 20px;">
-          {% for category, msg in messages %}
-            <div class="flash {{ category }}">{{ msg }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-
     <section class="hero">
-      <h1>Startup Success Predictor</h1>
-      <p class="sub">AI-powered viability assessment for early-stage ventures using machine learning models trained on 5,000+ startup outcomes.</p>
+      <h1 class="animate-in">Startup <span class="accent-word">Success</span> Prediction</h1>
+      <p class="sub animate-in delay-1">Estimate success probability using early-stage Crunchbase indicators &mdash; funding, investor type, milestones, connections, industry &amp; location.</p>
 
-      <div class="grid">
-        
-        <!-- INPUT FORM CARD -->
-        <div class="card grid-form">
-          <div class="card-title">Venture Details</div>
+      <div class="main-grid">
+
+        <!-- Form -->
+        <div class="card animate-in delay-2" id="predict">
+          <div class="card-title"><span class="icon">&#9998;</span> Enter Startup Details</div>
           <form action="/predict" method="POST" class="form">
+
+            <div class="form-section">Funding Information</div>
             <div class="row">
               <div class="field">
-                <label>Founded Year</label>
-                <input type="number" name="founded_year" placeholder="e.g. 2023" 
-                       value="{{ form_data.get('founded_year','') }}" min="1990" max="2026" required>
+                <label>Total Funding (USD)</label>
+                <input type="number" step="1" name="funding_total_usd" placeholder="e.g. 5000000" value="{{ form_data.get('funding_total_usd','') }}" required>
+                <div class="hint">Total amount raised in US dollars</div>
               </div>
               <div class="field">
-                <label>Team Size</label>
-                <input type="number" name="employees" placeholder="e.g. 12" 
-                       value="{{ form_data.get('employees','') }}" min="1" required>
+                <label>Funding Rounds</label>
+                <input type="number" name="funding_rounds" min="0" placeholder="e.g. 3" value="{{ form_data.get('funding_rounds','') }}" required>
               </div>
             </div>
-            
+            <div class="row triple">
+              <div class="field">
+                <label>Time to First Funding (yrs)</label>
+                <input type="number" step="0.1" name="age_first_funding_year" placeholder="e.g. 0.5" value="{{ form_data.get('age_first_funding_year','') }}" required>
+                <div class="hint">How many years after founding until the first round</div>
+              </div>
+              <div class="field">
+                <label>Most Recent Funding (yrs)</label>
+                <input type="number" step="0.1" name="age_last_funding_year" placeholder="e.g. 3.0" value="{{ form_data.get('age_last_funding_year','') }}" required>
+                <div class="hint">Years from founding to most recent round</div>
+              </div>
+              <div class="field">
+                <label>Avg Participants / Round</label>
+                <input type="number" step="0.1" name="avg_participants" placeholder="e.g. 2.5" value="{{ form_data.get('avg_participants','') }}" required>
+              </div>
+            </div>
+
+            <div class="form-section">Company Profile</div>
             <div class="row">
               <div class="field">
-                <label>Total Funding ($M)</label>
-                <input type="number" step="0.01" name="total_funding" placeholder="e.g. 2.50" 
-                       value="{{ form_data.get('total_funding','') }}" min="0" required>
-                <div class="hint">Total capital raised in millions</div>
+                <label>Key Connections</label>
+                <input type="number" name="relationships" min="0" placeholder="e.g. 8" value="{{ form_data.get('relationships','') }}" required>
+                <div class="hint">Advisors, board members, co-founders linked</div>
               </div>
               <div class="field">
-                <label>Valuation ($B)</label>
-                <input type="number" step="0.001" name="valuation" placeholder="e.g. 0.02" 
-                       value="{{ form_data.get('valuation','') }}" min="0" required>
-                <div class="hint">Current valuation in billions</div>
+                <label>Milestones</label>
+                <input type="number" name="milestones" min="0" placeholder="e.g. 2" value="{{ form_data.get('milestones','') }}" required>
               </div>
             </div>
-            
-            <div class="field">
-              <label>Industry</label>
-              <select name="industry" required>
-                <option value="">Select Sector...</option>
-                {% for i in industries %}
-                  <option value="{{ i }}" {% if form_data.get('industry')==i %}selected{% endif %}>{{ i }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            
             <div class="row">
               <div class="field">
-                <label>Country</label>
-                <select name="country" required>
-                  <option value="">Select Region...</option>
-                  {% for c in countries %}
-                    <option value="{{ c }}" {% if form_data.get('country')==c %}selected{% endif %}>{{ c }}</option>
-                  {% endfor %}
+                <label>Time to First Milestone (yrs)</label>
+                <input type="number" step="0.1" name="age_first_milestone_year" placeholder="0 if none" value="{{ form_data.get('age_first_milestone_year','') }}">
+              </div>
+              <div class="field">
+                <label>Most Recent Milestone (yrs)</label>
+                <input type="number" step="0.1" name="age_last_milestone_year" placeholder="0 if none" value="{{ form_data.get('age_last_milestone_year','') }}">
+              </div>
+            </div>
+
+            <div class="form-section">Investor Backing</div>
+            <div class="toggle-row">
+              <label class="toggle-item"><input type="checkbox" name="has_VC" value="1" {% if form_data.get('has_VC')=='1' %}checked{% endif %}>Venture Capital</label>
+              <label class="toggle-item"><input type="checkbox" name="has_angel" value="1" {% if form_data.get('has_angel')=='1' %}checked{% endif %}>Angel Investor</label>
+              <label class="toggle-item"><input type="checkbox" name="has_roundA" value="1" {% if form_data.get('has_roundA')=='1' %}checked{% endif %}>Series A</label>
+              <label class="toggle-item"><input type="checkbox" name="has_roundB" value="1" {% if form_data.get('has_roundB')=='1' %}checked{% endif %}>Series B</label>
+              <label class="toggle-item"><input type="checkbox" name="has_roundC" value="1" {% if form_data.get('has_roundC')=='1' %}checked{% endif %}>Series C</label>
+              <label class="toggle-item"><input type="checkbox" name="has_roundD" value="1" {% if form_data.get('has_roundD')=='1' %}checked{% endif %}>Series D</label>
+              <label class="toggle-item"><input type="checkbox" name="is_top500" value="1" {% if form_data.get('is_top500')=='1' %}checked{% endif %}>Top-500 VC</label>
+            </div>
+
+            <div class="form-section">Location &amp; Industry</div>
+            <div class="row">
+              <div class="field">
+                <label>State</label>
+                <select name="state_code" required>
+                  <option value="">Select state</option>
+                  {% for s in states %}<option value="{{ s }}" {% if form_data.get('state_code')==s %}selected{% endif %}>{{ s }}</option>{% endfor %}
                 </select>
               </div>
               <div class="field">
-                <label>Funding Stage</label>
-                <select name="funding_stage" required>
-                  <option value="">Select Stage...</option>
-                  {% for s in stages %}
-                    <option value="{{ s }}" {% if form_data.get('funding_stage')==s %}selected{% endif %}>{{ s }}</option>
-                  {% endfor %}
+                <label>Industry</label>
+                <select name="category_code" required>
+                  <option value="">Select industry</option>
+                  {% for c in categories %}<option value="{{ c }}" {% if form_data.get('category_code')==c %}selected{% endif %}>{{ c }}</option>{% endfor %}
                 </select>
               </div>
             </div>
-            
-            <div class="field">
-              <label>Social Media Followers</label>
-              <input type="number" name="social_followers" placeholder="e.g. 5000" 
-                     value="{{ form_data.get('social_followers','') }}" min="0" required>
-              <div class="hint">Combined followers across platforms</div>
-            </div>
-            
-            <div class="field">
-              <label>Tech Stack</label>
-              <select name="tech_stack" multiple size="4" required>
-                {% for t in tech_options %}
-                  <option value="{{ t }}" 
-                    {% if form_data.get('tech_stack') and t in form_data.get('tech_stack') %}selected{% endif %}>{{ t }}</option>
-                {% endfor %}
-              </select>
-              <div class="hint">Hold Ctrl/Cmd to select multiple</div>
-            </div>
-            
+
             <div class="actions">
-              <button class="btn" type="submit">🚀 Predict Success</button>
+              <button class="btn" type="submit">Predict Success</button>
+              <a class="btn ghost" href="/">Reset</a>
             </div>
           </form>
         </div>
 
-        <!-- RESULT CARD -->
-        <div class="card grid-result result-card">
-          <div class="card-title">Prediction Result</div>
+        <!-- Result -->
+        <div class="card animate-in delay-3">
+          <div class="card-title"><span class="icon">&#9881;</span> Prediction Output</div>
 
           {% if prediction is not none %}
-            <!-- Success Ring -->
-            <div class="ring" style="--p: {{ prediction }}; --c: {{ ring_color }};">
-              <span>{{ prediction }}%</span>
-            </div>
-            
-            <div class="result-label">Estimated Outcome</div>
-            <div class="result-value" style="color: {{ ring_color }};">
-              {{ classification }}
+            <div class="gauge-wrapper">
+              <div class="gauge-ring">
+                <svg width="180" height="180" viewBox="0 0 180 180">
+                  <circle class="gauge-track" cx="90" cy="90" r="78" />
+                  <circle class="gauge-fill" cx="90" cy="90" r="78" stroke="{{ '#2fe39c' if pred_label=='Success' else '#ff6b6b' }}" stroke-dasharray="490" stroke-dashoffset="{{ 490 - (490 * prediction / 100) }}" />
+                </svg>
+                <div class="gauge-center">
+                  <div class="gauge-percent" style="color:{{ '#2fe39c' if pred_label=='Success' else '#ff6b6b' }}">{{ prediction }}%</div>
+                  <div class="gauge-label">Success Probability</div>
+                </div>
+              </div>
+              <div class="pred-status {{ 'success' if pred_label=='Success' else 'failure' }}">&#x25CF; Predicted: {{ pred_label }}</div>
             </div>
 
-            <a href="{{ url_for('insights') }}" class="btn" style="background-color: var(--bg-input); border: 1px solid var(--primary); color: var(--primary); margin-top: 15px;">
-              📊 View Full Analytics Report →
-            </a>
-            
-            <div class="hint" style="margin-top: 15px; text-align: center;">
-              Based on ML analysis of 5,000+ startups
+            {% if risk_factors %}
+            <div style="margin-top:20px;">
+              <div class="chart-title">Factor Strength Analysis</div>
+              {% for rf in risk_factors %}
+              <div class="risk-bar-group">
+                <div class="risk-bar-label">
+                  <span>{{ rf.factor }}</span>
+                  <span style="color:{{ '#2fe39c' if rf.status=='strong' else ('#f5c542' if rf.status=='moderate' else '#ff6b6b') }}">{{ rf.score }}%</span>
+                </div>
+                <div class="risk-bar-track"><div class="risk-bar-fill {{ rf.status }}" style="width:{{ rf.score }}%"></div></div>
+              </div>
+              {% endfor %}
             </div>
+            {% endif %}
+
+            <!-- Links to other pages -->
+            <div style="display:flex; gap:10px; margin-top:18px;">
+              <a href="{{ url_for('charts') }}" class="btn" style="text-decoration:none; text-align:center;">View Charts</a>
+              <a href="{{ url_for('insights') }}" class="btn ghost" style="text-decoration:none; text-align:center; width:100%;">View Insights</a>
+            </div>
+
+            <div class="note">Decision-support estimate based on early-stage Crunchbase indicators. Real outcomes depend on execution, market timing, and external factors.</div>
           {% else %}
-            <div class="empty">
-              <div style="font-size: 2.5rem; margin-bottom: 15px;">📊</div>
-              <div style="font-size: 1rem; margin-bottom: 8px;">No prediction yet</div>
-              <div style="font-size: 0.85rem; opacity: 0.7;">Enter startup details and click Predict</div>
-            </div>
+            <div class="empty">Enter startup details and click <b>Predict Success</b> to see the probability estimate.</div>
           {% endif %}
-          
-          {% if error %}
-            <div class="error" style="margin-top: 15px;">
-              <strong>Error:</strong> {{ error }}
-            </div>
-          {% endif %}
-        </div>
 
+          {% if error %}<div class="error"><b>Error:</b> {{ error }}</div>{% endif %}
+
+          <div class="mini">
+            <div class="mini-title">Demo tip</div>
+            <div class="mini-text">Try: $8M funding, 3 rounds, VC + Series A, 6 connections, CA, software &rarr; then compare with $200K, 1 round, no VC.</div>
+          </div>
+        </div>
       </div>
     </section>
-  </main>
 
-  <footer style="text-align: center; padding: 30px 0; color: var(--text-sub); font-size: 0.8rem;">
-    <div class="container">
-      VentureVerse © 2026 | BSc Computer Science Final Year Project | University of Westminster
-    </div>
-  </footer>
+    <footer class="footer">
+      <div>VentureVerse Prototype &bull; Flask + scikit-learn + Chart.js &bull; BSc Computer Science Final Project &bull; University of Westminster</div>
+    </footer>
+  </main>
 
 </body>
 </html>
